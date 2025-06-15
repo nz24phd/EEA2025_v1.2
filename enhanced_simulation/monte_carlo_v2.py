@@ -10,6 +10,7 @@ import multiprocessing as mp
 import os
 import sys
 import json
+import copy
 
 # 导入增强模块
 from enhanced_simulation.monte_carlo import SimulationScenario, SimulationResults
@@ -19,13 +20,13 @@ from enhanced_simulation.sumo_integration import SUMOIntegration
 from enhanced_simulation.gis_network_mapping import GISNetworkMapping
 from enhanced_simulation.advanced_bdwpt import AdvancedBDWPTModeling
 # from enhanced_simulation.analysis_tools import BDWPTAnalysisTools
+
 class EnhancedMonteCarloFramework:
     """集成SUMO的增强版Monte Carlo框架"""
     
     def __init__(self, base_network: Dict, use_sumo: bool = True):
         self.base_network = base_network
         self.use_sumo = use_sumo
-        self.num_scenarios = 5  # 增加场景数
         self.runs_per_scenario = 10
         
         # 定义更详细的场景
@@ -40,43 +41,16 @@ class EnhancedMonteCarloFramework:
     def run_single_simulation_with_sumo(self, scenario: SimulationScenario, 
                                       run_id: int) -> SimulationResults:
         """运行包含SUMO的单次仿真"""
-        bdwpt_model = AdvancedBDWPTModeling() # 初始化高级模型
+        
         print(f"  运行 {scenario.scenario_name} - 第{run_id+1}次")
-        # 在车辆循环内部
-        for vehicle in vehicles:
-            # ...
-            if in_zone and np.random.random() < scenario.bdwpt_penetration:
-                # ...
-                # 原始的功率调整方法
-                # speed_kmh = speed * 3.6
-                # ...
-                # adjusted_power = power_command * efficiency_factor
 
-                # 推荐的、更精确的功率调整方法
-                speed_kmh = speed * 3.6
-                # 假设对准误差和气隙是随机的
-                alignment_error = np.random.uniform(0, 15) # 0-15cm
-                air_gap = np.random.uniform(12, 20) # 12-20cm
-                
-                dynamic_efficiency = bdwpt_model.calculate_dynamic_efficiency(
-                    speed_kmh, alignment_error, air_gap
-                )
-                
-                # 应用动态效率
-                adjusted_power = 0
-                if power_command > 0: # 充电
-                    adjusted_power = power_command * dynamic_efficiency
-                else: # 放电 (V2G)，假设效率对称
-                    adjusted_power = power_command / dynamic_efficiency
-
-                # ... 累加功率
         # 初始化组件
         bdwpt_controller = BDWPTController()
         network_builder = RealisticLVNetworkBuilder()
         gis_mapper = GISNetworkMapping()
+        bdwpt_model = AdvancedBDWPTModeling()
         
         # 复制基础网络
-        import copy
         current_network = copy.deepcopy(self.base_network)
         
         # 结果跟踪
@@ -139,18 +113,21 @@ class EnhancedMonteCarloFramework:
                                         veh_id, voltage, int(current_time), grid_demand
                                     )
                                     
-                                    # 考虑速度对效率的影响
+                                    # 使用高级模型计算动态效率
                                     speed_kmh = speed * 3.6
-                                    if speed_kmh < 20:
-                                        efficiency_factor = 0.9
-                                    elif speed_kmh < 50:
-                                        efficiency_factor = 0.95
-                                    else:
-                                        efficiency_factor = 0.85
-                                        
-                                    # 调整功率
-                                    adjusted_power = power_command * efficiency_factor
+                                    alignment_error = np.random.uniform(0, 15)
+                                    air_gap = np.random.uniform(12, 20)
                                     
+                                    dynamic_efficiency = bdwpt_model.calculate_dynamic_efficiency(
+                                        speed_kmh, alignment_error, air_gap
+                                    )
+                                    
+                                    adjusted_power = 0
+                                    if power_command > 0: # 充电 G2V
+                                        adjusted_power = power_command * dynamic_efficiency
+                                    elif power_command < 0: # 放电 V2G
+                                        adjusted_power = power_command / max(dynamic_efficiency, 0.1) # 避免除以零
+
                                     # 累加到对应节点
                                     if nearest_bus not in total_power_by_bus:
                                         total_power_by_bus[nearest_bus] = 0
@@ -192,9 +169,65 @@ class EnhancedMonteCarloFramework:
                 sumo.close()
                 
         else:
-            # 使用简化模型（原有方式）
-            # ... 原有的仿真代码 ...
-            pass
+            # === 为“快速演示”模式（不使用SUMO）实现的简化仿真逻辑 ===
+            print("  运行简化模型（无SUMO）...")
+            num_evs = 30  # 假设有30辆EV
+            
+            # 初始化EV
+            for i in range(num_evs):
+                veh_id = f"demo_ev_{i}"
+                is_bdwpt = np.random.random() < scenario.bdwpt_penetration
+                if is_bdwpt:
+                    bdwpt_controller.initialize_ev(veh_id, True, 0)
+
+            # 按小时步长仿真24小时
+            for hour in range(24):
+                # 更新住宅和光伏负荷
+                network_with_time = network_builder.update_loads_for_time(
+                    current_network, hour, scenario.day_type
+                )
+                network_with_time = network_builder.add_pv_generation(
+                    network_with_time, hour, scenario.pv_penetration
+                )
+                
+                # 计算所有EV的总功率
+                total_ev_power_mw = 0
+                for veh_id, ev_state in bdwpt_controller.ev_states.items():
+                    if ev_state.bdwpt_enabled:
+                        # 简化模型：假设电压恒定，电网需求为总负荷
+                        voltage = 1.0 
+                        grid_demand = sum(network_with_time['bus'][:, 2]) # 有功功率PD之和
+                        
+                        power_command_kw = bdwpt_controller.calculate_power_command(
+                            veh_id, voltage, hour, grid_demand
+                        )
+                        
+                        # 在简化模型中，我们假设效率为1
+                        total_ev_power_mw += power_command_kw / 1000.0
+                        
+                        # 更新EV SoC
+                        bdwpt_controller.update_ev_soc(veh_id, power_command_kw, 1.0) # 1小时步长
+                
+                # 将EV总功率应用到网络的低压母线上 (Bus 2)
+                network_with_time['bus'][1][2] += total_ev_power_mw # Bus索引为1
+                
+                # 运行潮流计算
+                from pypower.api import runpf, ppoption
+                ppopt = ppoption(VERBOSE=0, OUT_ALL=0)
+                results, success = runpf(network_with_time, ppopt)
+                
+                if success:
+                    min_voltage = min(results['bus'][:, 7])
+                    total_demand = sum(results['bus'][:, 2])
+                    voltage_history.append(min_voltage)
+                    power_history.append(total_demand)
+                    # 简化统计
+                    ev_stats.append({
+                        'active_evs': len(bdwpt_controller.ev_states),
+                        'charging_evs': len(bdwpt_controller.ev_states),
+                        'total_ev_power': total_ev_power_mw
+                    })
+            # === 简化仿真逻辑结束 ===
             
         # 计算最终指标
         return self._calculate_results(scenario, run_id, voltage_history, 
@@ -228,7 +261,7 @@ class EnhancedMonteCarloFramework:
             min_voltage_pu=min_voltage,
             max_voltage_pu=max_voltage,
             voltage_violations=voltage_violations,
-            avg_voltage_deviation=np.mean([abs(v - 1.0) for v in voltage_history]),
+            avg_voltage_deviation=np.mean([abs(v - 1.0) for v in voltage_history]) if voltage_history else 0,
             peak_demand_mw=actual_peak,
             peak_shaving_achieved_mw=peak_shaving,
             total_energy_traded_mwh=energy_traded / 1000,
@@ -247,6 +280,7 @@ class EnhancedMonteCarloFramework:
         for scenario in self.scenarios:
             print(f"\n场景: {scenario.scenario_name}")
             
+            # 使用简单的循环代替多进程，以简化调试
             for run_id in range(self.runs_per_scenario):
                 result = self.run_single_simulation_with_sumo(scenario, run_id)
                 all_results.append(result)
@@ -256,6 +290,7 @@ class EnhancedMonteCarloFramework:
         results_df = pd.DataFrame(results_data)
         
         # 保存结果
+        os.makedirs("results", exist_ok=True)
         results_df.to_csv('results/monte_carlo_v2_results.csv', index=False)
         
         # 生成统计摘要

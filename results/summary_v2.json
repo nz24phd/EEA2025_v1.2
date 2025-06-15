@@ -1,8 +1,8 @@
 {
   "Baseline": {
     "voltage_performance": {
-      "min_voltage_mean": 1.0,
-      "min_voltage_std": 0.0,
+      "min_voltage_mean": 0.9968590074183246,
+      "min_voltage_std": 8.05832790967611e-06,
       "violations_mean": 0.0
     },
     "peak_shaving": {
@@ -16,8 +16,8 @@
   },
   "Low_BDWPT": {
     "voltage_performance": {
-      "min_voltage_mean": 1.0,
-      "min_voltage_std": 0.0,
+      "min_voltage_mean": 0.9934507058558749,
+      "min_voltage_std": 0.0008076782511913556,
       "violations_mean": 0.0
     },
     "peak_shaving": {
@@ -26,13 +26,13 @@
     },
     "economics": {
       "grid_savings_mean": 0.0,
-      "ev_revenue_mean": 0.0
+      "ev_revenue_mean": 0.09677228615215323
     }
   },
   "High_BDWPT": {
     "voltage_performance": {
-      "min_voltage_mean": 1.0,
-      "min_voltage_std": 0.0,
+      "min_voltage_mean": 0.9919902081008003,
+      "min_voltage_std": 0.0008179370904738591,
       "violations_mean": 0.0
     },
     "peak_shaving": {
@@ -41,13 +41,13 @@
     },
     "economics": {
       "grid_savings_mean": 0.0,
-      "ev_revenue_mean": 0.0
+      "ev_revenue_mean": 0.2893308956839755
     }
   },
   "High_Traffic_Rain": {
     "voltage_performance": {
-      "min_voltage_mean": 1.0,
-      "min_voltage_std": 0.0,
+      "min_voltage_mean": 0.9919845090280901,
+      "min_voltage_std": 0.0010752555101072908,
       "violations_mean": 0.0
     },
     "peak_shaving": {
@@ -56,13 +56,13 @@
     },
     "economics": {
       "grid_savings_mean": 0.0,
-      "ev_revenue_mean": 0.0
+      "ev_revenue_mean": 0.2678404420014998
     }
   },
   "Weekend_HighPV": {
     "voltage_performance": {
-      "min_voltage_mean": 1.0,
-      "min_voltage_std": 0.0,
+      "min_voltage_mean": 0.992709301124165,
+      "min_voltage_std": 0.0011715666535523763,
       "violations_mean": 0.0
     },
     "peak_shaving": {
@@ -71,7 +71,7 @@
     },
     "economics": {
       "grid_savings_mean": 0.0,
-      "ev_revenue_mean": 0.0
+      "ev_revenue_mean": 0.26868965481948764
     }
   }
 }

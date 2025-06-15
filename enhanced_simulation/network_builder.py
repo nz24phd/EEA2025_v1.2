@@ -1,5 +1,6 @@
 import numpy as np
 from typing import Dict, List, Tuple, Optional
+from .nz_network_data import NZDistributionNetworkData
 import pandas as pd
 
 class RealisticLVNetworkBuilder:
