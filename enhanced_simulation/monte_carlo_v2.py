@@ -17,7 +17,8 @@ from enhanced_simulation.bdwpt_controller import BDWPTController
 from enhanced_simulation.network_builder import RealisticLVNetworkBuilder
 from enhanced_simulation.sumo_integration import SUMOIntegration
 from enhanced_simulation.gis_network_mapping import GISNetworkMapping
-
+from enhanced_simulation.advanced_bdwpt import AdvancedBDWPTModeling
+# from enhanced_simulation.analysis_tools import BDWPTAnalysisTools
 class EnhancedMonteCarloFramework:
     """集成SUMO的增强版Monte Carlo框架"""
     
@@ -39,22 +40,44 @@ class EnhancedMonteCarloFramework:
     def run_single_simulation_with_sumo(self, scenario: SimulationScenario, 
                                       run_id: int) -> SimulationResults:
         """运行包含SUMO的单次仿真"""
-        
+        bdwpt_model = AdvancedBDWPTModeling() # 初始化高级模型
         print(f"  运行 {scenario.scenario_name} - 第{run_id+1}次")
-        
+        # 在车辆循环内部
+        for vehicle in vehicles:
+            # ...
+            if in_zone and np.random.random() < scenario.bdwpt_penetration:
+                # ...
+                # 原始的功率调整方法
+                # speed_kmh = speed * 3.6
+                # ...
+                # adjusted_power = power_command * efficiency_factor
+
+                # 推荐的、更精确的功率调整方法
+                speed_kmh = speed * 3.6
+                # 假设对准误差和气隙是随机的
+                alignment_error = np.random.uniform(0, 15) # 0-15cm
+                air_gap = np.random.uniform(12, 20) # 12-20cm
+                
+                dynamic_efficiency = bdwpt_model.calculate_dynamic_efficiency(
+                    speed_kmh, alignment_error, air_gap
+                )
+                
+                # 应用动态效率
+                adjusted_power = 0
+                if power_command > 0: # 充电
+                    adjusted_power = power_command * dynamic_efficiency
+                else: # 放电 (V2G)，假设效率对称
+                    adjusted_power = power_command / dynamic_efficiency
+
+                # ... 累加功率
         # 初始化组件
         bdwpt_controller = BDWPTController()
         network_builder = RealisticLVNetworkBuilder()
         gis_mapper = GISNetworkMapping()
         
         # 复制基础网络
-        current_network = {
-            'version': self.base_network['version'],
-            'baseMVA': self.base_network['baseMVA'],
-            'bus': self.base_network['bus'].copy(),
-            'gen': self.base_network['gen'].copy(),
-            'branch': self.base_network['branch'].copy()
-        }
+        import copy
+        current_network = copy.deepcopy(self.base_network)
         
         # 结果跟踪
         voltage_history = []

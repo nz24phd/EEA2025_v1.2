@@ -5,10 +5,17 @@ import pandas as pd
 class RealisticLVNetworkBuilder:
     """现实低压配电网络构建器"""
     
+    # def __init__(self):
+    #     # 标准低压参数
+    #     self.base_voltage_kv = 0.4  # 400V低压系统
+    #     self.base_mva = 1.0  # 1MVA基准
     def __init__(self):
-        # 标准低压参数
-        self.base_voltage_kv = 0.4  # 400V低压系统
-        self.base_mva = 1.0  # 1MVA基准
+        # 使用NZ数据
+        nz_specs = NZDistributionNetworkData().nz_network_standards
+        
+        self.base_voltage_kv = nz_specs['voltage_levels']['lv_secondary'] # 0.4kV
+        self.base_mva = 1.0
+        self.cable_params = nz_specs['cable_standards']['underground_cu_95'] # 使用95mm²铜缆
         
         # 典型负荷配置文件 (p.u.)
         self.load_profiles = {
@@ -66,9 +73,10 @@ class RealisticLVNetworkBuilder:
             distance_m = np.random.uniform(50, 200)  # 50-200米
             
             # 低压电缆参数 (XLPE 电缆)
-            r_per_km = 0.32  # ohm/km (95mm²电缆)
-            x_per_km = 0.08  # ohm/km
-            
+            # r_per_km = 0.32  # ohm/km (95mm²电缆)
+            # x_per_km = 0.08  # ohm/km
+            r_per_km = self.cable_params['r_ohm_km']
+            x_per_km = self.cable_params['x_ohm_km']
             # 转换为标准化值
             distance_km = distance_m / 1000.0
             r_pu = (r_per_km * distance_km) / ((self.base_voltage_kv**2) / self.base_mva)

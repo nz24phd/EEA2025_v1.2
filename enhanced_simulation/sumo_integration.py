@@ -144,19 +144,18 @@ def create_enhanced_sumo_network():
     # 保存文件
     os.makedirs("sumo_files_v2", exist_ok=True)
     
-    with open("sumo_files_v2/enhanced_road.nod.xml", "w") as f:
+    # 修正: 明确指定UTF-8编码，避免BOM问题
+    with open("sumo_files_v2/enhanced_road.nod.xml", "w", encoding="utf-8") as f:
         f.write(nodes_content)
         
-    with open("sumo_files_v2/enhanced_road.edg.xml", "w") as f:
+    with open("sumo_files_v2/enhanced_road.edg.xml", "w", encoding="utf-8") as f:
         f.write(edges_content)
         
-    with open("sumo_files_v2/enhanced_road.rou.xml", "w") as f:
+    with open("sumo_files_v2/enhanced_road.rou.xml", "w", encoding="utf-8") as f:
         f.write(routes_content)
         
-    with open("sumo_files_v2/enhanced_road.sumocfg", "w") as f:
+    with open("sumo_files_v2/enhanced_road.sumocfg", "w", encoding="utf-8") as f:
         f.write(config_content)
-        
-    print("✓ 增强的SUMO网络文件已创建")
     
     # 生成网络文件
     try:

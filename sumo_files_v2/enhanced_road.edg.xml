@@ -1,15 +1,15 @@
 <edges>
-    <!-- Ö÷¸ÉµÀ (Lambton QuayÄ£Äâ) -->
+    <!-- ä¸»å¹²é“ (Lambton Quayæ¨¡æ‹Ÿ) -->
     <edge id="main_1" from="n0" to="n1" priority="2" numLanes="2" speed="13.89" />
     <edge id="main_2" from="n1" to="n2" priority="2" numLanes="2" speed="13.89" />
     <edge id="main_3" from="n2" to="n3" priority="2" numLanes="2" speed="13.89" />
     
-    <!-- Ö§Â· (Willis StreetÄ£Äâ) -->
+    <!-- æ”¯è·¯ (Willis Streetæ¨¡æ‹Ÿ) -->
     <edge id="side_1" from="n1" to="n4" priority="1" numLanes="1" speed="11.11" />
     <edge id="side_2" from="n4" to="n5" priority="1" numLanes="1" speed="11.11" />
     <edge id="side_3" from="n5" to="n2" priority="1" numLanes="1" speed="11.11" />
     
-    <!-- »·Â· (Featherston StreetÄ£Äâ) -->
+    <!-- çŽ¯è·¯ (Featherston Streetæ¨¡æ‹Ÿ) -->
     <edge id="loop_1" from="n0" to="n6" priority="1" numLanes="1" speed="8.33" />
     <edge id="loop_2" from="n6" to="n7" priority="1" numLanes="1" speed="8.33" />
     <edge id="loop_3" from="n7" to="n8" priority="1" numLanes="1" speed="8.33" />

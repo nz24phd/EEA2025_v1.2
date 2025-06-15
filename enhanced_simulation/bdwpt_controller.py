@@ -125,9 +125,12 @@ class BDWPTController:
         # 3. 智能充放电策略
         if voltage_violation or demand_violation:
             # 电网需要支撑 - 考虑V2G放电
+            # if (ev.soc > 0.6 and 
+            #     ev.participation_willingness > 0.5 and
+            #     np.random.random() < 0.7):  # 70%概率参与V2G
+            # 改进逻辑: 参与意愿越高，越有可能参与
             if (ev.soc > 0.6 and 
-                ev.participation_willingness > 0.5 and
-                np.random.random() < 0.7):  # 70%概率参与V2G
+            np.random.random() < ev.participation_willingness):
                 
                 # V2G放电功率计算
                 max_discharge = min(

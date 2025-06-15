@@ -1,15 +1,15 @@
 <routes>
-    <!-- 车辆类型定义 -->
+    <!-- 杞﹁締绫诲瀷瀹氫箟 -->
     <vType id="ev_bdwpt" vClass="passenger" length="4.5" maxSpeed="16.67" accel="2.5" decel="4.5" sigma="0.5" color="0,1,0" />
     <vType id="ev_standard" vClass="passenger" length="4.5" maxSpeed="16.67" accel="2.5" decel="4.5" sigma="0.5" color="0,0,1" />
     <vType id="normal_car" vClass="passenger" length="4.5" maxSpeed="16.67" accel="2.5" decel="4.5" sigma="0.5" color="1,1,0" />
     
-    <!-- 路线定义 -->
+    <!-- 璺嚎瀹氫箟 -->
     <route id="route_main" edges="main_1 main_2 main_3" />
     <route id="route_side" edges="main_1 side_1 side_2 side_3 main_3" />
     <route id="route_loop" edges="loop_1 loop_2 loop_3 loop_4" />
     
-    <!-- 交通流定义 - 使用flow而不是individual vehicles -->
+    <!-- 浜ら�氭祦瀹氫箟 - 浣跨敤flow鑰屼笉鏄痠ndividual vehicles -->
     <flow id="flow_main_ev" type="ev_bdwpt" route="route_main" begin="0" end="3600" number="50" />
     <flow id="flow_side_ev" type="ev_standard" route="route_side" begin="0" end="3600" number="30" />
     <flow id="flow_normal" type="normal_car" route="route_main" begin="0" end="3600" number="100" />
