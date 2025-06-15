@@ -1,0 +1,77 @@
+{
+  "Baseline": {
+    "voltage_performance": {
+      "min_voltage_mean": 1.0,
+      "min_voltage_std": 0.0,
+      "violations_mean": 0.0
+    },
+    "peak_shaving": {
+      "mean_mw": 0.0,
+      "std_mw": 0.0
+    },
+    "economics": {
+      "grid_savings_mean": 0.0,
+      "ev_revenue_mean": 0.0
+    }
+  },
+  "Low_BDWPT": {
+    "voltage_performance": {
+      "min_voltage_mean": 1.0,
+      "min_voltage_std": 0.0,
+      "violations_mean": 0.0
+    },
+    "peak_shaving": {
+      "mean_mw": 0.0,
+      "std_mw": 0.0
+    },
+    "economics": {
+      "grid_savings_mean": 0.0,
+      "ev_revenue_mean": 0.0
+    }
+  },
+  "High_BDWPT": {
+    "voltage_performance": {
+      "min_voltage_mean": 1.0,
+      "min_voltage_std": 0.0,
+      "violations_mean": 0.0
+    },
+    "peak_shaving": {
+      "mean_mw": 0.0,
+      "std_mw": 0.0
+    },
+    "economics": {
+      "grid_savings_mean": 0.0,
+      "ev_revenue_mean": 0.0
+    }
+  },
+  "High_Traffic_Rain": {
+    "voltage_performance": {
+      "min_voltage_mean": 1.0,
+      "min_voltage_std": 0.0,
+      "violations_mean": 0.0
+    },
+    "peak_shaving": {
+      "mean_mw": 0.0,
+      "std_mw": 0.0
+    },
+    "economics": {
+      "grid_savings_mean": 0.0,
+      "ev_revenue_mean": 0.0
+    }
+  },
+  "Weekend_HighPV": {
+    "voltage_performance": {
+      "min_voltage_mean": 1.0,
+      "min_voltage_std": 0.0,
+      "violations_mean": 0.0
+    },
+    "peak_shaving": {
+      "mean_mw": 0.0,
+      "std_mw": 0.0
+    },
+    "economics": {
+      "grid_savings_mean": 0.0,
+      "ev_revenue_mean": 0.0
+    }
+  }
+}

@@ -1,0 +1,17 @@
+<edges>
+    <!-- 主干道 (Lambton Quay模拟) -->
+    <edge id="main_1" from="n0" to="n1" priority="2" numLanes="2" speed="13.89" />
+    <edge id="main_2" from="n1" to="n2" priority="2" numLanes="2" speed="13.89" />
+    <edge id="main_3" from="n2" to="n3" priority="2" numLanes="2" speed="13.89" />
+    
+    <!-- 支路 (Willis Street模拟) -->
+    <edge id="side_1" from="n1" to="n4" priority="1" numLanes="1" speed="11.11" />
+    <edge id="side_2" from="n4" to="n5" priority="1" numLanes="1" speed="11.11" />
+    <edge id="side_3" from="n5" to="n2" priority="1" numLanes="1" speed="11.11" />
+    
+    <!-- 环路 (Featherston Street模拟) -->
+    <edge id="loop_1" from="n0" to="n6" priority="1" numLanes="1" speed="8.33" />
+    <edge id="loop_2" from="n6" to="n7" priority="1" numLanes="1" speed="8.33" />
+    <edge id="loop_3" from="n7" to="n8" priority="1" numLanes="1" speed="8.33" />
+    <edge id="loop_4" from="n8" to="n3" priority="1" numLanes="1" speed="8.33" />
+</edges>

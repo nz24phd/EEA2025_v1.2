@@ -1,0 +1,14 @@
+<routes>
+    <vType id="ev" vClass="passenger" length="5" maxSpeed="16.67" />
+    <route id="route0" edges="edge0" />
+    <vehicle id="veh0" type="ev" route="route0" depart="1" />
+    <vehicle id="veh1" type="ev" route="route0" depart="10" />
+    <vehicle id="veh2" type="ev" route="route0" depart="20" />
+    <vehicle id="veh3" type="ev" route="route0" depart="30" />
+    <vehicle id="veh4" type="ev" route="route0" depart="40" />
+    <vehicle id="veh5" type="ev" route="route0" depart="50" />
+    <vehicle id="veh6" type="ev" route="route0" depart="60" />
+    <vehicle id="veh7" type="ev" route="route0" depart="70" />
+    <vehicle id="veh8" type="ev" route="route0" depart="80" />
+    <vehicle id="veh9" type="ev" route="route0" depart="90" />
+</routes>

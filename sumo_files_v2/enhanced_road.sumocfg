@@ -1,0 +1,15 @@
+<configuration>
+    <input>
+        <net-file value="enhanced_road.net.xml"/>
+        <route-files value="enhanced_road.rou.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="3600"/>
+        <step-length value="1"/>
+    </time>
+    <processing>
+        <lateral-resolution value="0.8"/>
+        <collision.check-junctions value="true"/>
+    </processing>
+</configuration>

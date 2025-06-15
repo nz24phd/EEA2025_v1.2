@@ -1,0 +1,16 @@
+bdwpt_penetration,traffic_density,day_type,weather_condition,pv_penetration,scenario_name,run_id,min_voltage_pu,max_voltage_pu,voltage_violations,avg_voltage_deviation,peak_demand_mw,peak_shaving_achieved_mw,reverse_power_flow_hours,total_energy_traded_mwh,avg_ev_soc_end,charging_efficiency,v2g_utilization,total_losses_mwh,transformer_loading_max,line_loading_max,grid_cost_savings,ev_owner_revenue
+0.0,medium,weekday,clear,0.3,Baseline,0,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.0,medium,weekday,clear,0.3,Baseline,1,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.0,medium,weekday,clear,0.3,Baseline,2,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.15,medium,weekday,clear,0.3,Low_BDWPT,0,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.15,medium,weekday,clear,0.3,Low_BDWPT,1,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.15,medium,weekday,clear,0.3,Low_BDWPT,2,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.4,medium,weekday,clear,0.3,High_BDWPT,0,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.4,medium,weekday,clear,0.3,High_BDWPT,1,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.4,medium,weekday,clear,0.3,High_BDWPT,2,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.4,high,weekday,rain,0.3,High_Traffic_Rain,0,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.4,high,weekday,rain,0.3,High_Traffic_Rain,1,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.4,high,weekday,rain,0.3,High_Traffic_Rain,2,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.4,low,weekend,clear,0.5,Weekend_HighPV,0,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.4,low,weekend,clear,0.5,Weekend_HighPV,1,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
+0.4,low,weekend,clear,0.5,Weekend_HighPV,2,1.0,1.0,0,,0,0,0,0.0,0.5,0.95,0.0,0.0,0.0,0.0,0.0,0.0
