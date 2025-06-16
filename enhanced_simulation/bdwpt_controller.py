@@ -36,7 +36,7 @@ class BDWPTController:
         # 控制参数
         self.voltage_threshold_low = 0.95  # 低电压阈值
         self.voltage_threshold_high = 1.05  # 高电压阈值
-        self.peak_demand_threshold_mw = 0.8  # 峰值需求阈值
+        self.peak_demand_threshold_mw = 0.1  # 0.8 # 峰值需求阈值
         
         # 价格信号 ($/kWh)
         self.electricity_prices = {

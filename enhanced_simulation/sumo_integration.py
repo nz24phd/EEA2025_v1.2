@@ -119,9 +119,9 @@ def create_enhanced_sumo_network():
     <route id="route_loop" edges="loop_1 loop_2 loop_3 loop_4" />
     
     <!-- 交通流定义 - 使用flow而不是individual vehicles -->
-    <flow id="flow_main_ev" type="ev_bdwpt" route="route_main" begin="0" end="3600" number="50" />
-    <flow id="flow_side_ev" type="ev_standard" route="route_side" begin="0" end="3600" number="30" />
-    <flow id="flow_normal" type="normal_car" route="route_main" begin="0" end="3600" number="100" />
+    <flow id="flow_main_ev" type="ev_bdwpt" route="route_main" begin="0" end="57600" number="50" />
+    <flow id="flow_side_ev" type="ev_standard" route="route_side" begin="0" end="57600" number="30" />
+    <flow id="flow_normal" type="normal_car" route="route_main" begin="0" end="57600" number="100" />
 </routes>"""
     
     # 配置文件

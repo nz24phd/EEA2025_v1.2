@@ -64,12 +64,13 @@ class EnhancedMonteCarloFramework:
             sumo.start_simulation(gui=False)
             
             try:
-                # 仿真1小时的早高峰
-                for step in range(3600):  # 1小时，1秒步长
+                # 仿真16小时(从早上7点到晚上11点)
+                simulation_duration = 16 * 3600  # 16小时，单位为秒
+                for step in range(simulation_duration):  # 16小时，1秒步长
                     sumo.step()
                     
-                    # 每30秒更新一次电力网络
-                    if step % 30 == 0:
+                    # 每15分钟（900秒）更新一次电力网络
+                    if step % 900 == 0:
                         current_time = 7 + step / 3600  # 从早上7点开始
                         
                         # 获取道路上的车辆
@@ -251,9 +252,25 @@ class EnhancedMonteCarloFramework:
         controller_metrics = bdwpt_controller.get_performance_metrics()
         
         # 经济指标
-        peak_reduction_value = peak_shaving * 1000 * 0.35  # $0.35/kW
+        # peak_reduction_value = peak_shaving * 1000 * 0.35  # $0.35/kW
         energy_traded = controller_metrics['total_energy_traded_kwh']
         energy_value = energy_traded * 0.15  # $0.15/kWh
+        
+        # return SimulationResults(
+        #     scenario=scenario,
+        #     run_id=run_id,
+        #     min_voltage_pu=min_voltage,
+        #     max_voltage_pu=max_voltage,
+        #     voltage_violations=voltage_violations,
+        #     avg_voltage_deviation=np.mean([abs(v - 1.0) for v in voltage_history]) if voltage_history else 0,
+        #     peak_demand_mw=actual_peak,
+        #     peak_shaving_achieved_mw=peak_shaving,
+        #     total_energy_traded_mwh=energy_traded / 1000,
+        #     avg_ev_soc_end=controller_metrics['avg_final_soc'],
+        #     v2g_utilization=controller_metrics.get('v2g_participation_rate', 0),
+        #     grid_cost_savings=peak_reduction_value,
+        #     ev_owner_revenue=energy_value * 0.5
+        # )
         
         return SimulationResults(
             scenario=scenario,
@@ -263,14 +280,16 @@ class EnhancedMonteCarloFramework:
             voltage_violations=voltage_violations,
             avg_voltage_deviation=np.mean([abs(v - 1.0) for v in voltage_history]) if voltage_history else 0,
             peak_demand_mw=actual_peak,
-            peak_shaving_achieved_mw=peak_shaving,
+            # 将peak_shaving和grid_cost_savings暂时设为0，它们将在后处理中计算
+            peak_shaving_achieved_mw=0, 
+            grid_cost_savings=0,
             total_energy_traded_mwh=energy_traded / 1000,
             avg_ev_soc_end=controller_metrics['avg_final_soc'],
             v2g_utilization=controller_metrics.get('v2g_participation_rate', 0),
-            grid_cost_savings=peak_reduction_value,
-            ev_owner_revenue=energy_value * 0.5
+            # ev_owner_revenue的计算可以保留，因为它不依赖于peak_shaving
+            ev_owner_revenue=energy_traded * 0.15 * 0.5 
         )
-        
+    
     def run_analysis(self):
         """运行完整分析"""
         print("开始增强版Monte Carlo分析（包含SUMO）")

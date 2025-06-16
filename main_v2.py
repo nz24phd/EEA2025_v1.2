@@ -1,137 +1,148 @@
-#!/usr/bin/env python3
-"""
-EEA2025 v1.2 主程序
-集成SUMO交通仿真的BDWPT分析
-"""
+# 文件: main_v2.py (完整替换)
 
+import time
 import os
 import sys
-import time
-from pathlib import Path
 
-# 导入增强模块
-from enhanced_simulation.bdwpt_controller import BDWPTController
+# 动态添加路径以便导入增强模块
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
+
 from enhanced_simulation.network_builder import RealisticLVNetworkBuilder
-from enhanced_simulation.monte_carlo_v2 import EnhancedMonteCarloFramework
-from enhanced_simulation.analysis_tools import BDWPTAnalysisTools
 from enhanced_simulation.sumo_integration import create_enhanced_sumo_network
 from enhanced_simulation.gis_network_mapping import GISNetworkMapping
+from enhanced_simulation.monte_carlo_v2 import EnhancedMonteCarloFramework
+from enhanced_simulation.analysis_tools import BDWPTAnalysisTools
 
-def main():
-    print("🔋 BDWPT仿真平台 v1.2")
-    print("📋 集成SUMO交通仿真")
-    print("=" * 50)
-    
-    # 创建结果目录
-    os.makedirs("results", exist_ok=True)
-    os.makedirs("sumo_files_v2", exist_ok=True)
-    
-    # 步骤1: 创建SUMO网络（如果不存在）
-    if not os.path.exists("sumo_files_v2/enhanced_road.net.xml"):
-        print("\n1️⃣ 创建SUMO道路网络...")
+def setup_simulation_environment():
+    """准备仿真所需的文件和环境"""
+    print("1️⃣ 创建SUMO道路网络...")
+    if not os.path.exists('sumo_files_v2/enhanced_road.net.xml'):
         create_enhanced_sumo_network()
     else:
-        print("\n1️⃣ SUMO网络已存在")
-    
-    # 步骤2: 创建配电网
+        print("✓ SUMO网络已存在")
+
     print("\n2️⃣ 创建配电网络...")
-    network_builder = RealisticLVNetworkBuilder()
-    base_network = network_builder.create_realistic_lv_network(num_houses=25)
-    
-    # 验证网络
-    is_valid, issues = network_builder.validate_network(base_network)
-    if not is_valid:
-        print(f"⚠️ 网络验证警告: {issues}")
-    else:
+    builder = RealisticLVNetworkBuilder()
+    network = builder.create_realistic_lv_network()
+    is_valid, issues = builder.validate_network(network)
+    if is_valid:
         print("✓ 配电网络创建成功")
-    
-    # 步骤3: 创建GIS映射
-    print("\n3️⃣ 创建GIS道路映射...")
-    gis_mapper = GISNetworkMapping()
-    gis_mapper.export_mapping_config("results/gis_mapping.json")
-    
-    # 步骤4: 选择运行模式
-    print("\n请选择运行模式:")
-    print("1. 快速演示（不使用SUMO）")
-    print("2. 完整仿真（使用SUMO，较慢）")
-    print("3. 批量分析（Monte Carlo）")
-    
-    choice = input("\n请输入选择 (1/2/3): ").strip()
-    
-    if choice == '1':
-        run_quick_demo(base_network)
-    elif choice == '2':
-        run_full_simulation(base_network)
-    elif choice == '3':
-        run_monte_carlo(base_network)
     else:
-        print("无效选择")
-        
+        print("⚠️ 配电网络创建警告:", issues)
+    
+    print("\n3️⃣ 创建GIS道路映射...")
+    mapper = GISNetworkMapping()
+    # 定义好要保存的路径
+    config_path = 'results/gis_mapping.json'
+    # 将路径字符串作为参数传递给方法
+    mapper.export_mapping_config(filename=config_path)
+    # 在打印时也使用我们定义的路径变量
+    print(f"✓ 映射配置已保存到: {config_path}")
+    
+    return network
+
 def run_quick_demo(base_network):
-    """快速演示模式"""
+    """运行一个不依赖SUMO的快速演示"""
     print("\n运行快速演示...")
+    start_time = time.time()
     
-    # 使用简化的Monte Carlo（不用SUMO）
     mc_framework = EnhancedMonteCarloFramework(base_network, use_sumo=False)
-    mc_framework.runs_per_scenario = 3  # 减少运行次数
-    
     results_df, summary = mc_framework.run_analysis()
     
-    # 生成分析报告
-    analysis_tools = BDWPTAnalysisTools(results_df, summary)
-    analysis_tools.create_comprehensive_report("results")
+    end_time = time.time()
+    print(f"\n分析用时: {end_time - start_time:.1f} 秒")
     
-    print("\n✅ 演示完成！查看results文件夹")
-    
+    analysis_tools = BDWPTAnalysisTools()
+    analysis_tools.run_all_plots()
+    analysis_tools.generate_report()
+
 def run_full_simulation(base_network):
-    """完整仿真模式（使用SUMO）"""
+    """运行一个使用SUMO的单次完整仿真"""
     print("\n运行完整仿真（使用SUMO）...")
-    
-    # 检查SUMO
-    if 'SUMO_HOME' not in os.environ:
-        print("❌ 错误：SUMO_HOME环境变量未设置")
-        print("请安装SUMO并设置环境变量")
-        return
-        
-    # 运行包含SUMO的仿真
+    start_time = time.time()
+
     mc_framework = EnhancedMonteCarloFramework(base_network, use_sumo=True)
-    mc_framework.runs_per_scenario = 5
+    mc_framework.runs_per_scenario = 1
+    mc_framework.scenarios = [mc_framework.scenarios[2]]
     
     results_df, summary = mc_framework.run_analysis()
+
+    end_time = time.time()
+    print(f"\n分析用时: {end_time - start_time:.1f} 秒")
     
-    # 生成分析报告
-    analysis_tools = BDWPTAnalysisTools(results_df, summary)
-    analysis_tools.create_comprehensive_report("results")
-    
-    print("\n✅ 完整仿真完成！查看results文件夹")
-    
+    if not results_df.empty:
+        analysis_tools = BDWPTAnalysisTools()
+        analysis_tools.run_all_plots()
+        analysis_tools.generate_report()
+
 def run_monte_carlo(base_network):
-    """批量Monte Carlo分析"""
+    """运行用户自定义的批量Monte Carlo分析"""
     print("\n运行Monte Carlo分析...")
-    
-    runs = int(input("每个场景运行次数 (建议10-50): ") or "10")
-    use_sumo = input("使用SUMO? (y/n): ").lower() == 'y'
-    
+    try:
+        runs = int(input("每个场景运行次数 (建议10-50): "))
+        use_sumo_input = input("使用SUMO? (y/n): ").lower()
+        use_sumo = use_sumo_input == 'y'
+    except (ValueError, IndexError):
+        print("输入无效，使用默认值 (10次, 使用SUMO)")
+        runs = 10
+        use_sumo = True
+
+    start_time = time.time()
+
     mc_framework = EnhancedMonteCarloFramework(base_network, use_sumo=use_sumo)
     mc_framework.runs_per_scenario = runs
-    
-    start_time = time.time()
     results_df, summary = mc_framework.run_analysis()
-    elapsed = time.time() - start_time
+
+    end_time = time.time()
+    print(f"\n分析用时: {end_time - start_time:.1f} 秒")
+
+    analysis_tools = BDWPTAnalysisTools()
+    analysis_tools.run_all_plots()
+    analysis_tools.generate_report()
+
+def main():
+    """主函数入口"""
+    print("="*50)
+    print("🔋 BDWPT仿真平台 v1.4 - 最终稳定版")
+    print("📋 集成SUMO交通仿真与高级分析")
+    print("="*50)
     
-    print(f"\n分析用时: {elapsed:.1f} 秒")
+    base_network = setup_simulation_environment()
     
-    # 生成分析报告
-    analysis_tools = BDWPTAnalysisTools(results_df, summary)
-    analysis_tools.create_comprehensive_report("results")
-    
-    # 显示关键结果
-    print("\n📊 关键结果:")
-    for scenario, data in summary.items():
-        print(f"\n{scenario}:")
-        print(f"  平均最小电压: {data['voltage_performance']['min_voltage_mean']:.4f} p.u.")
-        print(f"  削峰量: {data['peak_shaving']['mean_mw']:.3f} MW")
-        print(f"  经济效益: ${data['economics']['grid_savings_mean']:.2f}")
-    
+    while True:
+        print("\n请选择运行模式:")
+        print("1. 快速演示（不使用SUMO）")
+        print("2. 完整仿真（使用SUMO，单次运行）")
+        print("3. 批量分析（Monte Carlo）")
+        print("4. 仅生成图表（如果已有results.csv）")
+        print("5. 退出")
+        
+        choice = input("请输入选择 (1/2/3/4/5): ")
+        
+        if choice == '1':
+            run_quick_demo(base_network)
+            break
+        elif choice == '2':
+            run_full_simulation(base_network)
+            break
+        elif choice == '3':
+            run_monte_carlo(base_network)
+            break
+        elif choice == '4':
+            print("\n重新生成分析图表...")
+            results_path = 'results/monte_carlo_v2_results.csv'
+            if os.path.exists(results_path):
+                analysis_tools = BDWPTAnalysisTools(results_csv_path=results_path)
+                analysis_tools.run_all_plots()
+                analysis_tools.generate_report()
+            else:
+                print(f"错误: '{results_path}' 未找到。请先运行一次仿真。")
+            break
+        elif choice == '5':
+            print("程序退出。")
+            break
+        else:
+            print("无效输入，请输入1, 2, 3, 4或5。")
+
 if __name__ == "__main__":
     main()
